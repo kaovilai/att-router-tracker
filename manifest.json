@@ -1,0 +1,11 @@
+{
+  "domain": "att_router_tracker",
+  "name": "AT&T Router Device Tracker",
+  "codeowners": ["@custom"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://github.com/custom/att_router_tracker",
+  "iot_class": "local_polling",
+  "requirements": ["beautifulsoup4==4.12.2", "lxml==4.9.3"],
+  "version": "1.0.0"
+}

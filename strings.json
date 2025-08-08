@@ -1,0 +1,41 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "AT&T Router Configuration",
+        "description": "Enter your router details to track devices",
+        "data": {
+          "host": "Router IP Address",
+          "session_id": "Session ID"
+        },
+        "data_description": {
+          "host": "IP address of your AT&T router (usually 192.168.1.254)",
+          "session_id": "Session ID from your browser's cookie after logging into the router"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to router. Please check your IP address and session ID.",
+      "unknown": "Unexpected error occurred"
+    },
+    "abort": {
+      "already_configured": "Router is already configured"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "AT&T Router Options",
+        "description": "Configure which devices are always home (like smart home devices) and presence detection",
+        "data": {
+          "always_home_devices": "Always Home Devices",
+          "presence_detection": "Enable Presence Detection"
+        },
+        "data_description": {
+          "always_home_devices": "Select devices that are always at home (smart TVs, thermostats, etc). These won't be used for presence detection.",
+          "presence_detection": "Create a sensor that detects if someone is home based on tracked devices"
+        }
+      }
+    }
+  }
+}
