@@ -30,7 +30,10 @@ from .const import (
     ATTR_NAME,
     ATTR_SIGNAL_STRENGTH,
     ATTR_STATUS,
+    AUTH_METHOD_ACCESS_CODE,
+    CONF_ACCESS_CODE,
     CONF_ALWAYS_HOME_DEVICES,
+    CONF_AUTH_METHOD,
     CONF_SESSION_ID,
     DEFAULT_SCAN_INTERVAL,
     DOMAIN,
@@ -47,9 +50,20 @@ async def async_setup_entry(
 ) -> None:
     """Set up device tracker for AT&T Router."""
     session = aiohttp_client.async_get_clientsession(hass)
-    client = ATTRouterClient(
-        session, entry.data[CONF_HOST], entry.data[CONF_SESSION_ID]
-    )
+    
+    # Create client based on auth method
+    if entry.data.get(CONF_AUTH_METHOD) == AUTH_METHOD_ACCESS_CODE:
+        client = ATTRouterClient(
+            session,
+            entry.data[CONF_HOST],
+            access_code=entry.data.get(CONF_ACCESS_CODE)
+        )
+    else:
+        client = ATTRouterClient(
+            session,
+            entry.data[CONF_HOST],
+            session_id=entry.data.get(CONF_SESSION_ID)
+        )
     
     async def async_update_data():
         """Fetch data from router."""
