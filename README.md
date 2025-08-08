@@ -25,12 +25,22 @@ This custom integration tracks devices connected to your AT&T router by scraping
 ## Configuration
 
 ### Initial Setup
-You'll need two pieces of information:
 
-#### 1. Router IP Address
+#### Option 1: Using Device Access Code (Recommended - Coming Soon)
+*Note: Direct authentication with Device Access Code is planned for a future update. For now, please use Option 2.*
+
+The integration will support:
+- Router IP Address (usually `192.168.1.254`)
+- Device Access Code (found on your router's label)
+- Automatic session management and re-authentication
+
+#### Option 2: Using Session ID (Current Method)
+Until automatic authentication is implemented, you'll need:
+
+**1. Router IP Address**
 Usually `192.168.1.254` for AT&T routers
 
-#### 2. Session ID
+**2. Session ID**
 To get your session ID:
 1. Open your browser and log into your router at http://192.168.1.254
 2. Enter your Device Access Code (found on the router label)
@@ -147,3 +157,17 @@ The integration distinguishes between two types of devices:
 2. **Tracked Devices**: Mobile devices that indicate someone's presence (phones, tablets, laptops)
 
 When any tracked device is online, the presence sensor shows "home". When only always-home devices are online, it shows "away". This prevents false presence detection from smart home devices while accurately tracking when people are actually home.
+
+## Planned Features
+
+- **Automatic Authentication**: Direct login using Device Access Code instead of manual session ID extraction
+- **Session Auto-Renewal**: Automatic re-authentication when session expires
+- **Device Notifications**: Alert when new unknown devices connect
+- **Historical Tracking**: Track device connection history and patterns
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+### Priority Feature: Device Access Code Authentication
+We're looking for contributors to help implement automatic authentication using the Device Access Code. This would eliminate the need for manual session ID extraction. If you're interested in helping, please check the issues section.
