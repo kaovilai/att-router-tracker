@@ -6,8 +6,13 @@ DEFAULT_HOST = "192.168.1.254"
 DEFAULT_SCAN_INTERVAL = 30  # seconds
 
 CONF_SESSION_ID = "session_id"
+CONF_ACCESS_CODE = "access_code"
+CONF_AUTH_METHOD = "auth_method"
 CONF_ALWAYS_HOME_DEVICES = "always_home_devices"
 CONF_PRESENCE_DETECTION = "presence_detection"
+
+AUTH_METHOD_ACCESS_CODE = "access_code"
+AUTH_METHOD_SESSION_ID = "session_id"
 
 ATTR_MAC = "mac_address"
 ATTR_IP = "ip_address"

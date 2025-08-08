@@ -2,20 +2,41 @@
   "config": {
     "step": {
       "user": {
-        "title": "AT&T Router Configuration",
-        "description": "Enter your router details to track devices",
+        "title": "AT&T Router Setup",
+        "description": "Choose your authentication method",
         "data": {
           "host": "Router IP Address",
-          "session_id": "Session ID"
+          "auth_method": "Authentication Method"
         },
         "data_description": {
           "host": "IP address of your AT&T router (usually 192.168.1.254)",
+          "auth_method": "Choose how to authenticate with your router"
+        }
+      },
+      "access_code": {
+        "title": "Enter Device Access Code",
+        "description": "Enter the Device Access Code from your router's label. The integration will automatically manage authentication.",
+        "data": {
+          "access_code": "Device Access Code"
+        },
+        "data_description": {
+          "access_code": "The access code printed on your router's label (same code you use to log into the web interface)"
+        }
+      },
+      "session_id": {
+        "title": "Enter Session ID",
+        "description": "Manually provide a session ID from your browser cookies. Note: This method requires manual renewal when the session expires.",
+        "data": {
+          "session_id": "Session ID"
+        },
+        "data_description": {
           "session_id": "Session ID from your browser's cookie after logging into the router"
         }
       }
     },
     "error": {
-      "cannot_connect": "Failed to connect to router. Please check your IP address and session ID.",
+      "cannot_connect": "Failed to connect to router. Please check your settings.",
+      "invalid_auth": "Invalid Device Access Code. Please check the code on your router's label.",
       "unknown": "Unexpected error occurred"
     },
     "abort": {

@@ -26,16 +26,18 @@ This custom integration tracks devices connected to your AT&T router by scraping
 
 ### Initial Setup
 
-#### Option 1: Using Device Access Code (Recommended - Coming Soon)
-*Note: Direct authentication with Device Access Code is planned for a future update. For now, please use Option 2.*
+#### Option 1: Using Device Access Code (Recommended)
+The integration now supports automatic authentication:
+1. **Router IP Address**: Usually `192.168.1.254`
+2. **Device Access Code**: Found on your router's label (same code you use to log in)
 
-The integration will support:
-- Router IP Address (usually `192.168.1.254`)
-- Device Access Code (found on your router's label)
-- Automatic session management and re-authentication
+The integration will:
+- Automatically authenticate with your router
+- Handle session expiration and re-authentication
+- No manual cookie extraction needed!
 
-#### Option 2: Using Session ID (Current Method)
-Until automatic authentication is implemented, you'll need:
+#### Option 2: Using Session ID (Legacy Method)
+For manual session management:
 
 **1. Router IP Address**
 Usually `192.168.1.254` for AT&T routers
@@ -158,16 +160,17 @@ The integration distinguishes between two types of devices:
 
 When any tracked device is online, the presence sensor shows "home". When only always-home devices are online, it shows "away". This prevents false presence detection from smart home devices while accurately tracking when people are actually home.
 
+## Features Added in v2.0.0
+
+- ✅ **Automatic Authentication**: Direct login using Device Access Code
+- ✅ **Session Auto-Renewal**: Automatic re-authentication when session expires
+
 ## Planned Features
 
-- **Automatic Authentication**: Direct login using Device Access Code instead of manual session ID extraction
-- **Session Auto-Renewal**: Automatic re-authentication when session expires
 - **Device Notifications**: Alert when new unknown devices connect
 - **Historical Tracking**: Track device connection history and patterns
+- **Multiple Router Support**: Track devices across multiple AT&T routers
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-### Priority Feature: Device Access Code Authentication
-We're looking for contributors to help implement automatic authentication using the Device Access Code. This would eliminate the need for manual session ID extraction. If you're interested in helping, please check the issues section.

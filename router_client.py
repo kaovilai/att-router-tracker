@@ -9,6 +9,8 @@ from typing import Any
 import aiohttp
 from bs4 import BeautifulSoup
 
+from .auth import ATTRouterAuth
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -19,16 +21,50 @@ class ATTRouterClient:
         self,
         session: aiohttp.ClientSession,
         host: str,
-        session_id: str,
+        session_id: str | None = None,
+        access_code: str | None = None,
     ) -> None:
         """Initialize the client."""
         self.session = session
         self.host = host
         self.session_id = session_id
+        self.access_code = access_code
         self.url = f"http://{host}/cgi-bin/devices.ha"
+        self.auth = ATTRouterAuth(session, host) if access_code else None
+        self._auth_failures = 0
         
+    async def _ensure_authenticated(self) -> bool:
+        """Ensure we have a valid session, authenticate if needed."""
+        # If we have access code but no session, authenticate
+        if self.access_code and not self.session_id:
+            _LOGGER.debug("No session ID, authenticating with access code")
+            self.session_id = await self.auth.authenticate_with_access_code(self.access_code)
+            if self.session_id:
+                self._auth_failures = 0
+                return True
+            return False
+        
+        # If we have auth capability, validate current session
+        if self.auth and self.session_id:
+            is_valid = await self.auth.validate_session(self.session_id)
+            if not is_valid:
+                _LOGGER.info("Session expired, re-authenticating")
+                self.session_id = await self.auth.authenticate_with_access_code(self.access_code)
+                if self.session_id:
+                    self._auth_failures = 0
+                    return True
+                return False
+        
+        # If we only have session ID (legacy mode), assume it's valid
+        return self.session_id is not None
+    
     async def get_devices(self) -> list[dict[str, Any]] | None:
         """Get list of devices from router."""
+        # Ensure we're authenticated
+        if not await self._ensure_authenticated():
+            _LOGGER.error("Failed to authenticate with router")
+            return None
+        
         headers = {
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
             "Accept-Language": "en-US,en;q=0.9",
@@ -44,13 +80,36 @@ class ATTRouterClient:
         
         try:
             async with self.session.get(
-                self.url, headers=headers, ssl=False, timeout=30
+                self.url, headers=headers, ssl=False, timeout=30, allow_redirects=False
             ) as response:
+                # Check if we got redirected to login
+                if response.status in [302, 303]:
+                    location = response.headers.get("Location", "")
+                    if "login" in location.lower():
+                        _LOGGER.warning("Session expired during request")
+                        # If we have auth capability, try to re-authenticate once
+                        if self.auth and self._auth_failures < 2:
+                            self._auth_failures += 1
+                            self.session_id = None
+                            return await self.get_devices()  # Retry once
+                        return None
+                
                 if response.status != 200:
                     _LOGGER.error("Failed to get devices: HTTP %s", response.status)
                     return None
                     
                 html = await response.text()
+                
+                # Check if response is actually a login page
+                if "login" in html.lower() and "password" in html.lower():
+                    _LOGGER.warning("Got login page instead of device list")
+                    if self.auth and self._auth_failures < 2:
+                        self._auth_failures += 1
+                        self.session_id = None
+                        return await self.get_devices()  # Retry once
+                    return None
+                
+                self._auth_failures = 0  # Reset on success
                 return self._parse_devices(html)
                 
         except aiohttp.ClientError as err:
